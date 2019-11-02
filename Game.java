@@ -12,26 +12,36 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.KeyAdapter;
 
+
 public class Game extends JPanel{
-
-
 	
-    //--------------------------
+	private static final int GAME_WIDTH = 800;
+	private static final int GAME_HEIGHT = 800;
+	//Hur många rutor som ska finnas på bredden och höjden
+	private static final int TILE_AMOUNT_W = 25;
+	private static final int TILE_AMOUNT_H = 25;
 
 
-    //KANSKE KAN GÖRA OM ALLT I EXPLOSIONS TILL REKTANGLAR MED AWT RECTANGLE
+    private int x = 0;
+	private int y = 0;
+	private Player player;
+	private ArrayList<Bomb> bombs = new ArrayList<Bomb>();
+	private ArrayList<Explosion> explosions = new ArrayList<Explosion>();
+	private Map gameMap;
+	//Storleken på en ruta
+	private int tileWidth;
+	private int tileHeight;
 
-
-    //------------------------------
-
-    int x = 0;
-	int y = 0;
-	Player player;
-	ArrayList<Bomb> bombs = new ArrayList<Bomb>();
-	ArrayList<Explosion> explosions = new ArrayList<Explosion>();
 	public Game(){
 		super();
-		this.setPreferredSize(new Dimension(500,500));
+
+		//Räknar ut hur stor en ruta måste vara för att få plats med 25 på planen
+		this.tileWidth = GAME_WIDTH / TILE_AMOUNT_W;
+		this.tileHeight = GAME_HEIGHT / TILE_AMOUNT_H;
+		this.gameMap = new Map(TILE_AMOUNT_W, TILE_AMOUNT_H, this.tileWidth, this.tileHeight);
+		gameMap.loadMap("Maps/map1.txt");
+
+		this.setPreferredSize(new Dimension(GAME_WIDTH,GAME_HEIGHT));
 		this.player = new Player(this);
 
 		KeyBoardListener key = new KeyBoardListener();
@@ -48,11 +58,12 @@ public class Game extends JPanel{
 		//För att få smooth saker
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
+		gameMap.paint(g2d);
 		player.paint(g2d);
 
 		//Paint Bombs
-		for (int i = 0; i < this.bombs.size(); i++){
-			this.bombs.get(i).paint(g2d);
+		for (Bomb b : this.bombs){
+			b.paint(g2d);
 		}
 
 		//Paint Explosions
@@ -62,20 +73,25 @@ public class Game extends JPanel{
 		
 	}
 
-	public void playerAction(char action){
-		if(action == 'a'){
+	private void playerAction(char action){
+		int pX = player.getX();
+		int pY = player.getY();
+		int pSpeed = player.getSpeed();
+
+
+		if(action == 'a' && collide(pX - pSpeed, pY) == false){
 			player.moveLeft();
 			repaint();
 		}
-		if(action == 'd'){
+		if(action == 'd' && collide(pX + pSpeed, pY) == false){
 			player.moveRight();
 			repaint();
 		}
-		if(action == 'w'){
+		if(action == 'w' && collide(pX, pY - pSpeed) == false){
 			player.moveUp();
 			repaint();
 		}
-		if(action == 's'){
+		if(action == 's' && collide(pX, pY - pSpeed) == false){
 			player.moveDown();
 			repaint();
 		}
@@ -86,6 +102,15 @@ public class Game extends JPanel{
 		}
 	}
 
+	//Tittar om x,y kolliderar med något i mappen
+	private boolean collide(int x, int y){
+		int tileW = x / this.tileWidth;
+		int tileH = y / this.tileHeight;
+		if(gameMap.getTile(tileW,tileH) != null || x > GAME_WIDTH-this.tileWidth || x < 0 || y > GAME_HEIGHT-this.tileHeight || y < 0){
+			return true;
+		}
+		return false;
+	}
 	//Tittar vilka bomber som ska sprängas
 	private void bombAction(){
 	
@@ -114,7 +139,11 @@ public class Game extends JPanel{
 	}
 
 	private void checkCollision(){
-
+		for(Explosion e : this.explosions){
+			if(e.collide(player.getX(), player.getY(), player.getWidth(), player.getHeight())){
+				System.out.println("OUCH! Player hit!");
+			}
+		}
 	}
 
 	//Game loop

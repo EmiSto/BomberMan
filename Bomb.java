@@ -4,15 +4,6 @@ import java.awt.Color;
 public class Bomb{
 
 
-    //--------------------------
-
-
-    //KANSKE KAN GÖRA OM ALLT I EXPLOSIONS TILL REKTANGLAR MED AWT RECTANGLE
-
-
-    //------------------------------
-
-
     private static final int STANDARD_EXPLOSION_SIZE = 60;
 
     private int x;

@@ -1,5 +1,9 @@
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import javax.swing.ImageIcon;
+
+import javax.swing.ImageIcon;
 
 public class Player{
 
@@ -20,14 +24,32 @@ public class Player{
         this.y = (int)d.getHeight() / 2;
     }
 
+    //Getters
     public int getX(){
         return this.x;
     }
     public int getY(){
         return this.y;
     }
+    public int getWidth(){
+        return this.width;
+    }
+    public int getHeight(){
+        return this.height;
+    }
+    public int getSpeed(){
+        return this.speed;
+    }
+
+    //Setters
+    public void setSpeed(int s){
+        this.speed = s;
+    }
 
     public void paint(Graphics2D g){
+        ImageIcon ii = new ImageIcon("Icons/Player/p1.png");
+        Image playerImage = ii.getImage();
+        //g.drawImage(playerImage, this.x, this.y, 40, 40, 0, 0, 20, 20,null);
         g.fillRect(this.x, this.y, this.width, this.height);
     }
 
@@ -43,4 +65,5 @@ public class Player{
     public void moveDown(){
         this.y += this.speed;
     }
+
 }

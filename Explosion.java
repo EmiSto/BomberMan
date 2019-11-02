@@ -1,18 +1,12 @@
 import java.awt.Graphics2D;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 
 public class Explosion{
 
-    //--------------------------
+    private Rectangle[] subExplosions = new Rectangle[4];
 
-
-    //KANSKE KAN GÖRA OM ALLT I EXPLOSIONS TILL REKTANGLAR MED AWT RECTANGLE
-
-
-    //------------------------------
-
-    private Dimension[] coords = new Dimension[4];
     private int width = 20;
     private int height = 20;
     private int expSize;
@@ -22,57 +16,31 @@ public class Explosion{
     public Explosion(int x, int y, int bombWidth, int bombHeight, int expSize){
 
         this.expSize = expSize;
-        //Första explosionen (upp)
-        this.coords[0] = new Dimension(x , y - expSize);
-        //Andra explosionen (till höger)
-        this.coords[1] = new Dimension(x + bombWidth, y);
-        //Tredje (ner)
-        this.coords[2] = new Dimension(x , y + bombHeight);
-        //Fjärde (vänster)
-        this.coords[3] = new Dimension(x - expSize, y);
 
+        this.subExplosions[0] = new Rectangle(x, y - expSize, this.width, expSize);
+        this.subExplosions[1] = new Rectangle(x + bombWidth, y, expSize, this.height);
+        this.subExplosions[2] = new Rectangle(x, y + bombHeight, this.width, expSize);
+        this.subExplosions[3] = new Rectangle(x - expSize, y, expSize, this.height);
         
         this.startTime = System.currentTimeMillis();
     }
 
     public void paint(Graphics2D g){
-        int x,y;
 
         g.setColor(Color.red);
-        for(int i = 0; i < this.coords.length; i++){
-            
-            x = (int)this.coords[i].getWidth();
-            y = (int)this.coords[i].getHeight();
-            if(i%2 == 0){
-                g.fillRect(x, y, this.width, this.expSize);
-            }
-            else{
-                g.fillRect(x, y, this.expSize, this.height);
-            }
+        for(int i = 0; i < this.subExplosions.length; i++){
+            Rectangle tmp = this.subExplosions[i];
+            g.fillRect((int)tmp.getX(), (int)tmp.getY(), (int)tmp.getWidth(), (int)tmp.getHeight());
         }
     }
 
     //Target x and y position with target width and height
     public boolean collide(int x, int y, int w, int h){
-        int xExpl, yExpl;
-        for(int i = 0; i<coords.length; i++){
-            xExpl = (int)coords[i].getWidth();
-            yExpl = (int)coords[i].getHeight();
-            if(i%2 == 0){
-                if(xExpl >= (x + w) && (xExpl + this.width) >= x){
-                    return true;
-                }
-                if(yExpl >= (y + h) && (yExpl + this.expSize) >= y){
-                    return true;
-                }
-            }
-            else{
-                if(xExpl >= (x + w) && (xExpl + this.expSize) >= x){
-                    return true;
-                }
-                if(yExpl >= (y + h) && (yExpl + this.height) >= y){
-                    return true;
-                }
+
+        Rectangle target = new Rectangle(x,y,w,h);
+        for(int i = 0; i < this.subExplosions.length; i++){
+            if(this.subExplosions[i].intersects(target)){
+                return true;
             }
         }
         return false;

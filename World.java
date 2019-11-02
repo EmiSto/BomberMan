@@ -8,7 +8,7 @@ import java.awt.event.KeyListener;
 
 public class World extends JFrame{
 	
-	Game game;
+	private Game game;
    	public World(){
 		initWorld();
    	}
