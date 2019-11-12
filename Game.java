@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.Ellipse2D;
 import javax.swing.JFrame;
@@ -15,11 +16,18 @@ import java.awt.event.KeyAdapter;
 
 public class Game extends JPanel{
 	
-	private static final int GAME_WIDTH = 800;
-	private static final int GAME_HEIGHT = 800;
+	private static final int GAME_WIDTH = 720;
+	private static final int GAME_HEIGHT = 720;
 	//Hur många rutor som ska finnas på bredden och höjden
-	private static final int TILE_AMOUNT_W = 25;
-	private static final int TILE_AMOUNT_H = 25;
+	private static final int TILE_AMOUNT_W = 12;
+	private static final int TILE_AMOUNT_H = 12;
+	//Directions
+	private static final int[] MOVE_UP = new int[]{0,-1};
+	private static final int[] MOVE_RIGHT = new int[]{1,0};
+	private static final int[] MOVE_DOWN = new int[]{0,1};
+	private static final int[] MOVE_LEFT = new int[]{-1,0};
+
+
 
 
     private int x = 0;
@@ -39,10 +47,10 @@ public class Game extends JPanel{
 		this.tileWidth = GAME_WIDTH / TILE_AMOUNT_W;
 		this.tileHeight = GAME_HEIGHT / TILE_AMOUNT_H;
 		this.gameMap = new Map(TILE_AMOUNT_W, TILE_AMOUNT_H, this.tileWidth, this.tileHeight);
-		gameMap.loadMap("Maps/map1.txt");
+		gameMap.loadMap("Maps/map2.txt");
 
 		this.setPreferredSize(new Dimension(GAME_WIDTH,GAME_HEIGHT));
-		this.player = new Player(this);
+		this.player = new Player(this, new Dimension(this.tileWidth-1, this.tileHeight-1));
 
 		KeyBoardListener key = new KeyBoardListener();
 		this.addKeyListener(key);
@@ -74,39 +82,59 @@ public class Game extends JPanel{
 	}
 
 	private void playerAction(char action){
-		int pX = player.getX();
-		int pY = player.getY();
-		int pSpeed = player.getSpeed();
 
 
-		if(action == 'a' && collide(pX - pSpeed, pY) == false){
+
+		if(action == 'a' && playerCollide(MOVE_LEFT) == false){
 			player.moveLeft();
 			repaint();
 		}
-		if(action == 'd' && collide(pX + pSpeed, pY) == false){
+		if(action == 'd' && playerCollide(MOVE_RIGHT) == false){
 			player.moveRight();
 			repaint();
 		}
-		if(action == 'w' && collide(pX, pY - pSpeed) == false){
+		if(action == 'w' && playerCollide(MOVE_UP) == false){
 			player.moveUp();
 			repaint();
 		}
-		if(action == 's' && collide(pX, pY - pSpeed) == false){
+		if(action == 's' && playerCollide(MOVE_DOWN) == false){
 			player.moveDown();
 			repaint();
 		}
 		else if(action == ' '){
-			Bomb b = new Bomb(player.getX(), player.getY());
+			Bomb b = this.player.plantBomb(this.gameMap);
+			this.gameMap.insertBomb(b, this.player.getX(), this.player.getY());
 			this.bombs.add(b);
 			System.out.println("DROP BOMB");
 		}
 	}
 
 	//Tittar om x,y kolliderar med något i mappen
-	private boolean collide(int x, int y){
-		int tileW = x / this.tileWidth;
-		int tileH = y / this.tileHeight;
-		if(gameMap.getTile(tileW,tileH) != null || x > GAME_WIDTH-this.tileWidth || x < 0 || y > GAME_HEIGHT-this.tileHeight || y < 0){
+	private boolean playerCollide(int[] dir){
+
+		Rectangle playerRect = this.player.willMove(dir);
+		int x = (int)playerRect.getX();
+		int y = (int)playerRect.getY();
+
+		// Utanför planen
+		if (x > GAME_WIDTH - this.tileWidth || x < 0 || y > GAME_HEIGHT - this.tileHeight || y < 0) {
+			return true;
+		}
+
+		//Övre högra 
+		if (this.gameMap.getTile(x + this.player.getWidth(), y) != null) {
+			return true;
+		}
+		//Undre högra
+		if (this.gameMap.getTile(x + this.player.getWidth(), y + this.player.getHeight()) != null) {
+			return true;
+		}
+		//Undre vänstra
+		if (this.gameMap.getTile(x, y + this.player.getHeight()) != null) {
+			return true;
+		}
+		//Övre vänstra
+		if(this.gameMap.getTile(x, y) != null){
 			return true;
 		}
 		return false;

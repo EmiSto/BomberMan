@@ -1,5 +1,6 @@
 import java.awt.Graphics2D;
 import java.awt.Color;
+import java.awt.Dimension;
 
 public class Bomb{
 
@@ -8,7 +9,7 @@ public class Bomb{
 
     private int x;
     private int y;
-    private int width = 20;
+    private int width  = 20;
     private int height = 20;
     
 
@@ -18,17 +19,22 @@ public class Bomb{
     private int explosionAmp;
     private boolean explode = false;
 
-    public Bomb(int x, int y){
-        this.x = x;
-        this.y = y;
+    public Bomb(Dimension size){
+        this.width = (int)size.getWidth();
+        this.height = (int)size.getHeight();
         this.explosionAmp = 1;
         this.startTime = System.currentTimeMillis();
     }
     
-    //Om bombens sprängning ändrats
+    /*//Om bombens sprängning ändrats
     public Bomb(int x, int y, int expAmp){
-        this(x,y);
+        this(x,y, tmp);
         this.explosionAmp = expAmp;
+    }*/
+
+    public void setPos(int x, int y){
+        this.x = x;
+        this.y = y;
     }
 
     public boolean willExplode(long currTime){

@@ -2,6 +2,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import javax.swing.ImageIcon;
+import java.awt.Rectangle;
 
 import javax.swing.ImageIcon;
 
@@ -11,17 +12,19 @@ public class Player{
     private int x;
     private int y;
     //Storleken
-    private int width = 20;
-    private int height = 20;
+    private int width;
+    private int height;
 
     private int speed = 10;
     private Game game;
 
-    public Player(Game g){
+    public Player(Game g, Dimension size){
         this.game = g;
         Dimension d = g.getPreferredSize();
         this.x = (int)d.getWidth() / 2;
         this.y = (int)d.getHeight() / 2;
+        this.width = (int)size.getWidth();
+        this.height = (int)size.getHeight();
     }
 
     //Getters
@@ -40,6 +43,10 @@ public class Player{
     public int getSpeed(){
         return this.speed;
     }
+    public Rectangle getBounds(){
+        Rectangle r = new Rectangle(this.x, this.y, this.width, this.height);
+        return r;
+    }
 
     //Setters
     public void setSpeed(int s){
@@ -53,6 +60,13 @@ public class Player{
         g.fillRect(this.x, this.y, this.width, this.height);
     }
 
+    //dir [0] är 1, 0 eller -1 för hur player rör sig i x-led
+    //returnerar en rectangle där player hamnar om den rör sig nu
+    public Rectangle willMove(int[] dir){
+        
+            Rectangle r = new Rectangle(this.x + (dir[0] * this.speed), this.y + (dir[1] * this.speed), this.width, this.height);
+            return r;    
+    }
     public void moveRight(){
         this.x += this.speed;
     }
@@ -64,6 +78,12 @@ public class Player{
     }
     public void moveDown(){
         this.y += this.speed;
+    }
+
+    public Bomb plantBomb(Map gameMap){
+        //Checka status etc
+        Bomb b = new Bomb(new Dimension(this.width, this.height));
+        return b;
     }
 
 }
