@@ -10,7 +10,8 @@ CLASSES = \
 		Game.java \
 		Player.java \
 		Bomb.java \
-		Explosion.java
+		Explosion.java \
+		Tile.java
 
 MAIN = World
 

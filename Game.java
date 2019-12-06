@@ -19,6 +19,7 @@ public class Game extends JPanel{
 	private static final int GAME_WIDTH = 720;
 	private static final int GAME_HEIGHT = 720;
 	//Hur många rutor som ska finnas på bredden och höjden
+	//Detta ger rutor som är 32*32
 	private static final int TILE_AMOUNT_W = 12;
 	private static final int TILE_AMOUNT_H = 12;
 	//Directions
@@ -48,9 +49,10 @@ public class Game extends JPanel{
 		this.tileHeight = GAME_HEIGHT / TILE_AMOUNT_H;
 		this.gameMap = new Map(TILE_AMOUNT_W, TILE_AMOUNT_H, this.tileWidth, this.tileHeight);
 		gameMap.loadMap("Maps/map2.txt");
+		gameMap.spawnStatus();
 
 		this.setPreferredSize(new Dimension(GAME_WIDTH,GAME_HEIGHT));
-		this.player = new Player(this, new Dimension(this.tileWidth-1, this.tileHeight-1));
+		this.player = new Player(this, new Dimension(this.tileWidth - 4, this.tileHeight - 4));
 
 		KeyBoardListener key = new KeyBoardListener();
 		this.addKeyListener(key);
@@ -82,30 +84,34 @@ public class Game extends JPanel{
 	}
 
 	private void playerAction(char action){
-
-
-
-		if(action == 'a' && playerCollide(MOVE_LEFT) == false){
-			player.moveLeft();
+		if(action == 'a'){
+			playerMove(MOVE_LEFT);
 			repaint();
 		}
-		if(action == 'd' && playerCollide(MOVE_RIGHT) == false){
-			player.moveRight();
+		if(action == 'd'){
+			playerMove(MOVE_RIGHT);
 			repaint();
 		}
-		if(action == 'w' && playerCollide(MOVE_UP) == false){
-			player.moveUp();
+		if(action == 'w'){
+			playerMove(MOVE_UP);
 			repaint();
 		}
-		if(action == 's' && playerCollide(MOVE_DOWN) == false){
-			player.moveDown();
+		if(action == 's'){
+			playerMove(MOVE_DOWN);
 			repaint();
 		}
 		else if(action == ' '){
 			Bomb b = this.player.plantBomb(this.gameMap);
-			this.gameMap.insertBomb(b, this.player.getX(), this.player.getY());
+			this.gameMap.insertBomb(b, this.player.getXCenter(), this.player.getYCenter());
 			this.bombs.add(b);
 			System.out.println("DROP BOMB");
+		}
+	}
+	private void playerMove(int[] dir){
+		if(playerCollide(dir) == false){
+			this.gameMap.removePlayer(this.player.getBounds());
+			player.move(dir);
+			this.gameMap.addPlayer(this.player.getBounds());
 		}
 	}
 
@@ -122,19 +128,19 @@ public class Game extends JPanel{
 		}
 
 		//Övre högra 
-		if (this.gameMap.getTile(x + this.player.getWidth(), y) != null) {
+		if (this.gameMap.getTile(x + this.player.getWidth(), y).obstructed()) {
 			return true;
 		}
 		//Undre högra
-		if (this.gameMap.getTile(x + this.player.getWidth(), y + this.player.getHeight()) != null) {
+		if (this.gameMap.getTile(x + this.player.getWidth(), y + this.player.getHeight()).obstructed()) {
 			return true;
 		}
 		//Undre vänstra
-		if (this.gameMap.getTile(x, y + this.player.getHeight()) != null) {
+		if (this.gameMap.getTile(x, y + this.player.getHeight()).obstructed()) {
 			return true;
 		}
 		//Övre vänstra
-		if(this.gameMap.getTile(x, y) != null){
+		if(this.gameMap.getTile(x, y).obstructed()){
 			return true;
 		}
 		return false;
@@ -146,7 +152,9 @@ public class Game extends JPanel{
 		for(int i = 0; i < this.bombs.size(); i++){
 			Bomb temp = this.bombs.get(i);
 			if(temp.willExplode(currTime)){
-				this.explosions.add(temp.explode());
+				Explosion e = temp.explode();
+				this.explosions.add(e);
+				this.gameMap.bombExplode(e);
 				System.out.println("BOOOM");
 				this.bombs.remove(i);
 			}

@@ -34,6 +34,12 @@ public class Player{
     public int getY(){
         return this.y;
     }
+    public int getXCenter(){
+        return (this.width + this.x*2) / 2; 
+    }
+    public int getYCenter(){
+        return (this.height + this.y*2) / 2;
+    }
     public int getWidth(){
         return this.width;
     }
@@ -78,6 +84,10 @@ public class Player{
     }
     public void moveDown(){
         this.y += this.speed;
+    }
+    public void move(int[] dir){
+        this.x += dir[0] * this.speed;
+        this.y += dir[1] * this.speed;
     }
 
     public Bomb plantBomb(Map gameMap){

@@ -5,12 +5,12 @@ import java.awt.Dimension;
 public class Bomb{
 
 
-    private static final int STANDARD_EXPLOSION_SIZE = 60;
+    private static final int STANDARD_EXPLOSION_SIZE = 64;
 
     private int x;
     private int y;
-    private int width  = 20;
-    private int height = 20;
+    private int width;
+    private int height;
     
 
     private long startTime;

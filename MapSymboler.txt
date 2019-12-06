@@ -1,0 +1,11 @@
+--Miljö--
+S - Sten
+T - Trä
+
+--Statusar--
+Börja med en siffra som berättar hur mågna olika det är
+P - Power
+M - MoreBombs
+S - Speed
+I - Invisibility
+
