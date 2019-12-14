@@ -56,27 +56,24 @@ public class Map{
     public void spawnStatus(){
         this.tiles[3][1].addStatus(this.status.get(0));
     }
-    public void addPlayer(Rectangle player){
-        int x1 = (int)player.getX();
-        int x2 = (int)(player.getX() + player.getWidth());
-        int y1 = (int)player.getY();
-        int y2 = (int)(player.getY() + player.getHeight());
-        
+    //Returns a status if there is one in any of the tiles
+    //returnerar null annars
+    public Status addPlayer(Rectangle player){
 
-        Tile t1 = tileTranslate(x1, y1);
-        Tile t2 = tileTranslate(x2, y2);
-        Tile t3 = tileTranslate(x1, y2);
-        Tile t4 = tileTranslate(x2, y1);
 
-        t1.addPlayer();
-        t2.addPlayer();
-        t3.addPlayer();
-        t4.addPlayer();
+        Tile [] tiles = getRelevantTiles(player);
+        Status s = null;
+        for(Tile t : tiles){
+            t.addPlayer();
+            s = t.getStatus();
+            t.removeStatus(); 
+        }
+        return s;
     }
 
-    //
+    
     public void removePlayer(Rectangle player){
-        int x1 = (int)player.getX();
+        /*int x1 = (int)player.getX();
         int x2 = (int)(player.getX() + player.getWidth());
         int y1 = (int)player.getY();
         int y2 = (int)(player.getY() + player.getHeight());
@@ -90,8 +87,25 @@ public class Map{
         t1.removePlayer();
         t2.removePlayer();
         t3.removePlayer();
-        t4.removePlayer();
+        t4.removePlayer();*/
 
+        Tile[] tiles = getRelevantTiles(player);
+        for(Tile t : tiles){
+            t.removePlayer();
+        }
+
+    }
+    //Help function for add and remove player
+    private Tile[] getRelevantTiles(Rectangle player){
+        Tile []relevantTiles = new Tile[4];
+        int x;
+        int y;
+        for(int i = 0; i < relevantTiles.length; i++){
+            x = (int)(player.getX() + player.getWidth()*(i % 2));
+            y = (int)(player.getY() + player.getWidth()*(i % 2));
+            relevantTiles[i] = tileTranslate(x, y);
+        }
+        return relevantTiles;
     }
     private Tile tileTranslate(int x, int y){
         int tileW = x / this.tileWidth;
@@ -166,7 +180,7 @@ public class Map{
             for(int i = 0; i < this.nrStatuses; i++){
                 ImageIcon ii = new ImageIcon("Icons/Map/Power.png");
                 icon = ii.getImage();
-                Status newS = new Status(icon);
+                Status newS = new Status(icon, "Power");
                 this.status.add(newS);
             }
             //Fyller mappen med images

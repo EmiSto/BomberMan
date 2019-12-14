@@ -6,9 +6,15 @@ import java.awt.Image;
 public class Status{
 
     private Image symbol;
+    private String name;
     
-    public Status(Image sym){
+    public Status(Image sym, String n){
         this.symbol = sym;
+        this.name = n;
+    }
+
+    public String getName(){
+        return this.name;
     }
 
     public Image getSybmol(){

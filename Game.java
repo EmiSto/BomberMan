@@ -101,7 +101,7 @@ public class Game extends JPanel{
 			repaint();
 		}
 		else if(action == ' '){
-			Bomb b = this.player.plantBomb(this.gameMap);
+			Bomb b = this.player.plantBomb();
 			this.gameMap.insertBomb(b, this.player.getXCenter(), this.player.getYCenter());
 			this.bombs.add(b);
 			System.out.println("DROP BOMB");
@@ -111,7 +111,10 @@ public class Game extends JPanel{
 		if(playerCollide(dir) == false){
 			this.gameMap.removePlayer(this.player.getBounds());
 			player.move(dir);
-			this.gameMap.addPlayer(this.player.getBounds());
+			Status s = this.gameMap.addPlayer(this.player.getBounds());
+			if (s != null){ 
+				this.player.receiveStatus(s);
+			}
 		}
 	}
 

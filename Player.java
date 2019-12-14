@@ -18,6 +18,9 @@ public class Player{
     private int speed = 10;
     private Game game;
 
+    //Statusar 
+    private int power = 0;
+
     public Player(Game g, Dimension size){
         this.game = g;
         Dimension d = g.getPreferredSize();
@@ -59,13 +62,7 @@ public class Player{
         this.speed = s;
     }
 
-    public void paint(Graphics2D g){
-        ImageIcon ii = new ImageIcon("Icons/Player/p1.png");
-        Image playerImage = ii.getImage();
-        //g.drawImage(playerImage, this.x, this.y, 40, 40, 0, 0, 20, 20,null);
-        g.fillRect(this.x, this.y, this.width, this.height);
-    }
-
+    
     //dir [0] är 1, 0 eller -1 för hur player rör sig i x-led
     //returnerar en rectangle där player hamnar om den rör sig nu
     public Rectangle willMove(int[] dir){
@@ -90,10 +87,24 @@ public class Player{
         this.y += dir[1] * this.speed;
     }
 
-    public Bomb plantBomb(Map gameMap){
+    public Bomb plantBomb(){
         //Checka status etc
-        Bomb b = new Bomb(new Dimension(this.width, this.height));
+        Bomb b = new Bomb(new Dimension(this.width, this.height), this.power);
         return b;
     }
+
+    public void receiveStatus(Status s){
+        if(s.getName() == "Power"){
+            this.power++;
+        }
+    }
+
+    public void paint(Graphics2D g){
+        ImageIcon ii = new ImageIcon("Icons/Player/p1.png");
+        Image playerImage = ii.getImage();
+        //g.drawImage(playerImage, this.x, this.y, 40, 40, 0, 0, 20, 20,null);
+        g.fillRect(this.x, this.y, this.width, this.height);
+    }
+
 
 }

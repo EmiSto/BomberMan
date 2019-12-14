@@ -25,6 +25,10 @@ public class Bomb{
         this.explosionAmp = 1;
         this.startTime = System.currentTimeMillis();
     }
+    public Bomb(Dimension size, int power){
+        this(size);
+        this.explosionAmp = power + 1;
+    }
     
     /*//Om bombens sprängning ändrats
     public Bomb(int x, int y, int expAmp){
