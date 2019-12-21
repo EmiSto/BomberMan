@@ -46,9 +46,9 @@ public class BombClient{
             InetAddress group = InetAddress.getByName(this.groupIP);
             //client.setTimeToLive(1);
             client.joinGroup(group);
+            Thread listener = new Thread(new ListenThread(client));
+            listener.start();
             byte[] out = new byte[1024];
-            byte[] in = new byte[1024];
-            DatagramPacket receivePacket =  new DatagramPacket(in, in.length);
             DatagramPacket sendPacket;
 
             Scanner sc = new Scanner(System.in);
@@ -60,9 +60,7 @@ public class BombClient{
                 out, out.length, InetAddress.getByName(this.serverIP), this.serverPort);
             client.send(sendPacket);
 
-            client.receive(receivePacket);
-            String s = new String(receivePacket.getData(), 0, receivePacket.getLength());
-            System.out.println(s);
+            
             }
             //sc.close();
         }catch(IOException e){
@@ -74,5 +72,26 @@ public class BombClient{
         BombClient bc = new BombClient();
         //bc.connectTCP();
         bc.connectUDP(args[0]);
+    }
+}
+
+class ListenThread extends Thread{
+    private MulticastSocket client;
+    byte[] in = new byte[1024];
+    private DatagramPacket receivePacket =  new DatagramPacket(in, in.length);
+    public ListenThread(MulticastSocket c){
+        this.client = c;
+    }
+    public void run() {
+       
+        while (true) {
+            try{
+            client.receive(receivePacket);
+            String s = new String(receivePacket.getData(), 0, receivePacket.getLength());
+            System.out.println(s);
+            }catch(IOException e){
+                System.out.println("Exiting now...");
+            }
+        }
     }
 }
