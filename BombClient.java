@@ -5,7 +5,8 @@ import java.util.Scanner;
 public class BombClient{
     private int portNumber = 4446;
     private int serverPort = 4445;
-    private String serverIP = "228.5.6.7";
+    private String groupIP = "228.5.6.7";
+    private String serverIP = "192.168.56.1";
 
     public void connectTCP() {
 
@@ -42,12 +43,12 @@ public class BombClient{
     public void connectUDP(String name){
         try{
             MulticastSocket client = new MulticastSocket(this.portNumber);
-
-            InetAddress group = InetAddress.getByName(this.serverIP);
+            InetAddress group = InetAddress.getByName(this.groupIP);
+            //client.setTimeToLive(1);
             client.joinGroup(group);
             byte[] out = new byte[1024];
             byte[] in = new byte[1024];
-            DatagramPacket recievePacket =  new DatagramPacket(in, in.length);
+            DatagramPacket receivePacket =  new DatagramPacket(in, in.length);
             DatagramPacket sendPacket;
 
             Scanner sc = new Scanner(System.in);
@@ -55,12 +56,13 @@ public class BombClient{
             while(true){
             response = name + ": " + sc.nextLine();
             out = response.getBytes();
-            sendPacket = new DatagramPacket(out, out.length, group, this.portNumber);
+            sendPacket = new DatagramPacket(
+                out, out.length, InetAddress.getByName(this.serverIP), this.serverPort);
             client.send(sendPacket);
 
-            client.receive(recievePacket);
-            String s = new String(recievePacket.getData(), 0, recievePacket.getLength());
-            System.out.println("From server: " + s);
+            client.receive(receivePacket);
+            String s = new String(receivePacket.getData(), 0, receivePacket.getLength());
+            System.out.println(s);
             }
             //sc.close();
         }catch(IOException e){

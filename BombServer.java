@@ -30,21 +30,25 @@ public class BombServer {
     public void listenSocketUDP(){
         try {
             DatagramSocket server = new DatagramSocket(this.serverPort);
-            byte[] recv = new byte[1024];
-            DatagramPacket recievePacket = new DatagramPacket(recv, recv.length);
-            DatagramPacket sendPacket;
             InetAddress group = InetAddress.getByName("228.5.6.7");
+            byte[] recv = new byte[1024];
+            DatagramPacket receivePacket = new DatagramPacket(recv, recv.length);
+            DatagramPacket sendPacket;
+            
             byte[] message = new byte[1024];
             while (true) {
                 
-                server.receive(recievePacket);
+                server.receive(receivePacket);
 
-                String s = new String(recievePacket.getData(), 6, recievePacket.getLength());
+                String s = new String(receivePacket.getData(), 0, receivePacket.getLength());
                 message = s.getBytes();
+                //String s = "nu kommer ett meddelande fron servern";
+                //message = s.getBytes();
                 sendPacket = new DatagramPacket(message, message.length, group, this.portNumber);
                 server.send(sendPacket);
+                System.out.println("Paket skickat");
                 try{
-                Thread.sleep(10000);
+                Thread.sleep(1000);
                 }catch(InterruptedException ie){
                     System.out.println(ie);
                 }
