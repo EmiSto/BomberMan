@@ -6,7 +6,7 @@ public class BombClient{
     private int portNumber = 4446;
     private int serverPort = 4445;
     private String groupIP = "228.5.6.7";
-    private String serverIP = "192.168.56.1";
+    private String serverIP = "192.168.1.106";
 
     public void connectTCP() {
 
@@ -44,7 +44,7 @@ public class BombClient{
         try{
             MulticastSocket client = new MulticastSocket(this.portNumber);
             InetAddress group = InetAddress.getByName(this.groupIP);
-            //client.setTimeToLive(1);
+
             client.joinGroup(group);
             Thread listener = new Thread(new ListenThread(client));
             listener.start();

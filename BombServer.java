@@ -30,6 +30,8 @@ public class BombServer {
     public void listenSocketUDP(){
         try {
             DatagramSocket server = new DatagramSocket(this.serverPort);
+            //server.setInterface(InetAddress.getByName("192.168.1.106"));
+
             InetAddress group = InetAddress.getByName("228.5.6.7");
             byte[] recv = new byte[1024];
             DatagramPacket receivePacket = new DatagramPacket(recv, recv.length);
