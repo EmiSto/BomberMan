@@ -21,14 +21,26 @@ public class Player{
     //Statusar 
     private int power = 0;
 
-    public Player(Game g, Dimension size){
-        this.game = g;
-        Dimension d = g.getPreferredSize();
-        this.x = (int)d.getWidth() / 2;
-        this.y = (int)d.getHeight() / 2;
+    //Gjorde denna konstruktor för att klienten inte skulle klaga
+    public Player(Dimension size){
+        this.x = 32;
+        this.y = 32;
         this.width = (int)size.getWidth();
         this.height = (int)size.getHeight();
     }
+    public Player(Game g, Dimension size){
+        this(size);
+        Dimension d = g.getPreferredSize();
+        this.x = (int)d.getWidth() / 2;
+        this.y = (int)d.getHeight() / 2;
+        this.game = g;
+    }
+    public Player(int startX, int startY, Dimension size){
+        this(size);
+        this.x = startX;
+        this.y = startY;
+    }
+
 
     //Getters
     public int getX(){
@@ -58,10 +70,15 @@ public class Player{
     }
 
     //Setters
+    public void setX(int x){
+        this.x = x;
+    }
+    public void setY(int y){
+        this.y = y;
+    }
     public void setSpeed(int s){
         this.speed = s;
     }
-
     
     //dir [0] är 1, 0 eller -1 för hur player rör sig i x-led
     //returnerar en rectangle där player hamnar om den rör sig nu

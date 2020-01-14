@@ -36,6 +36,24 @@ public class Bomb{
         this.explosionAmp = expAmp;
     }*/
 
+    //Getters
+    public int getX() {
+		return this.x;
+	}
+	public int getY() {
+		return this.y;
+	}
+	public int getWidth() {
+		return this.width;
+	}
+	public int getHeight() {
+		return this.height;
+	}
+	public int getExplosionAmp() {
+		return this.explosionAmp;
+    }
+    
+    //Setters
     public void setPos(int x, int y){
         this.x = x;
         this.y = y;
@@ -67,4 +85,5 @@ public class Bomb{
             g.fillRect(this.x - explotionSize, this.y, explotionSize, this.height);
         }*/
     }
+	
 }

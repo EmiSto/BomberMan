@@ -11,7 +11,9 @@ CLASSES = \
 		Player.java \
 		Bomb.java \
 		Explosion.java \
-		Tile.java
+		Tile.java \
+		BombClient.java \
+		BombServer.java 
 
 MAIN = World
 
